@@ -1,0 +1,16 @@
+version: '2'
+services:
+  couchdb:
+    build: ./couchdb
+    image: adentes/sofia-couchdb
+    environment:
+      - COUCHDB_USERNAME="username"
+      - COUCHDB_PASSWORD="userpass"
+      - COUCHDB_DBNAME="sofia-fiches"
+  #    - SOFIA_TEST=true
+    ports:     # Don't publish if you want to use caddy or any other webfront proxy and directly proxy to the caontiner IP
+       - "5984"
+
+  #front:
+  #  build: ./caddy
+  #  image: adentes/sofia-frontdb

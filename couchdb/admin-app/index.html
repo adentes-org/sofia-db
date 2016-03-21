@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SOFIA - Admin console</title>
+    <link rel="stylesheet" type="text/css" href="lib%2fmilligram.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib%2ftrumbowyg%2fui%2ftrumbowyg.min.css" />
+    <style type="text/css">
+      .page{
+        display : none;
+      }
+      .trumbowyg li, .trumbowyg button {
+        margin-bottom: 0;
+      }
+      #export p{
+        margin-bottom: 1rem;
+      }
+      #export p>span{
+        float: right;
+      }
+      #export>#table>.row>.column{
+       border: 1px solid #ccc;
+      }
+      #export>#table>.row>.column-50{
+       padding: 0px 0px 0px 1rem;
+      }
+      #export>#table>.row>.column .column-40{
+       padding:5px;
+      }
+      #export>#table>.row>.column .column-25{
+       padding:2px;
+      }
+      @media print {
+        #menu, body>h1, #export>button {
+          display:none;
+        }
+        #export img{
+          width: 75%;
+        }
+        #export #table{
+          font-size: 65%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SOFIA - Admin console</h1>
+    <div id="menu">
+      <a class="button button-outline" id="configuration">Configuration</a>
+      <a class="button button-outline" id="memo">Memo</a>
+      <a class="button button-outline" id="teams">Teams</a>
+      <a class="button button-outline" id="export" onclick="generateUsersData();">Export</a>
+    </div>
+    <div class="page" id="configuration">
+        <h2>Configuration</h2>
+        <input disabled type="text" id="url" value="" style="width: 100%;">
+        <div id="qrcode"></div>
+    </div>
+    <div class="page" id="memo">
+      <h2>Memo edition</h2>
+      <textarea></textarea>
+      <button class="button-primary" onclick="updateMemo();" style="float: right;">Valider</button>
+    </div>
+    <div class="page" id="teams">
+      <h2>Team Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Password</th>
+            <th>Roles</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="add-user">
+            <td><input type="text" id="name" placeholder="username" style="width: 240px;"></td>
+            <td><input type="text" id="password" placeholder="password" style="width: 240px;"></td>
+            <td></td>
+            <td>
+              <button class="button-primary" onclick="addUser();">Ajouter</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="page" id="export">
+      <button class="button-primary float-right" onclick="generateUsersQRCode();">Generate QR-Codes</button>
+      <button class="button-primary float-right" onclick="resetAllUsersPassword();" style="margin-right: 1rem;">Reset all password</button>
+      <h2>Export</h2>
+      <div id="table">
+      </div>
+    </div>
+  </body>
+    <script src="lib%2fjquery-2.2.0.min.js"></script>
+    <script src="lib%2fpouchdb-5.2.1.min.js"></script>
+    <script src="lib%2fqrcode.min.js"></script>
+    <script src="lib%2ftrumbowyg%2ftrumbowyg.min.js"></script>
+    <script src="script.js"></script>
+</html>
