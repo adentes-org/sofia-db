@@ -14,3 +14,11 @@ services:
   #front:
   #  build: ./caddy
   #  image: adentes/sofia-frontdb
+  #  environment:
+  #    - HOSTNAME="my.domain.fr"
+  #  ports:
+  #     - "80"
+  #     - "443"
+  #     - "5984"
+  #  links:
+  #   - couchdb:couchdb
