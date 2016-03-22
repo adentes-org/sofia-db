@@ -10,10 +10,11 @@ services:
   #    - SOFIA_TEST=true #Generate 10 testing users
     volumes:
       - ./couchdb/data:/data
-#    ports:     # Don't publish if you want to use caddy or any other webfront proxy and directly proxy to the caontiner IP
+#    ports:     # Publish if you want to don't use a front-end or publish on loopback
 #       - "5984:5984"
+#       - "127.0.0.1:5984:5984"
 
-  front:
+  front: # Comment all this parts to disable caddy front-end
     build: ./caddy
     image: adentes/sofia-frontdb
     environment:

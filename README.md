@@ -2,6 +2,10 @@
 
 Use docker-compose to fired up the DB
 
+## Setup
+```
+#Edit docker-compose.yml to reflect your settings
+```
 ## Start (with caddy for SSL termination)
 
 ```
