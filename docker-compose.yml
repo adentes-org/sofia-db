@@ -23,5 +23,7 @@ services:
        - "80:80"
        - "443:443"
        - "5984:5984"
+    volumes:
+       - ./caddy/data:/root/.caddy
     links:
      - couchdb:couchdb
