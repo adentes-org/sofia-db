@@ -17,4 +17,4 @@ ADD Caddyfile /etc/Caddyfile
 EXPOSE 80 443 5984
 
 ENTRYPOINT ["/usr/bin/caddy"]
-CMD ["--conf", "/etc/Caddyfile"]
+CMD ["--port", "5984", "--conf", "/etc/Caddyfile"]

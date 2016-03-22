@@ -201,15 +201,15 @@ function addUser() {
       }
 
 function updateMemo() {
-        console.log('Updating memo ...');
-        var attachment = new Blob([$('#memo>textarea').val()], { type: 'text/html' });
+        var textarea = $('#memo textarea');
+        var attachment = new Blob([textarea.val()], { type: 'text/html' });
         $('#memo>button').attr('disabled', 'disabled').text('Sending ...').blur();
-
+        console.log('Updating memo ...', attachment, textarea.attr('data-rev'));
         //*
-        db.fiches.putAttachment('_design/sofia-config', 'memo.html', $('#memo>textarea').attr('data-rev'), attachment, 'text/html').then(function (result) {
+        db.fiches.putAttachment('_design/sofia-config', 'memo.html', textarea.attr('data-rev'), attachment, 'text/html').then(function (result) {
           // handle result
           console.log(result);
-          $('#memo>textarea').attr('data-rev', result.rev);
+          textarea.attr('data-rev', result.rev);
           $('#memo>button').removeAttr('disabled').text('Sauvegardé !').css('background-color', 'green');
           window.setTimeout('$("#memo>button").text("Valider").css("background-color", "#9b4dca")', 3000);
         }).catch(function (err) {
@@ -289,11 +289,12 @@ $(function () {
               //db.fiches.getAttachment('_design/sofia-config', 'memo.html')
               db.fiches.get('_design/sofia-config', { attachments: true, binary: true }).then(function (doc) {
                 // handle result
+                console.log("Get memo",doc)
+                $('#memo textarea').attr('data-rev', doc._rev);
                 var reader = new FileReader();
                 reader.onload = function (event) {
-                  $('#memo>textarea').attr('data-rev', doc._rev);
-                  $('#memo>textarea').val(reader.result);
-                  $('#memo>textarea').trumbowyg();
+                  $('#memo textarea').val(reader.result);
+                  $('#memo textarea').trumbowyg();
                   showConfiguration();
                   $("#menu>a#configuration").click();
                 };

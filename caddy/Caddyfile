@@ -1,5 +1,10 @@
-https://{$HOSTNAME}:5984, https://{$HOSTNAME} {
+{$HOSTNAME}, http://{$HOSTNAME}, https://{$HOSTNAME} {
   gzip
   root /dev/null
-  proxy / http://couchdb:5984
+  proxy / http://couchdb:5984 {
+        proxy_header Host {host}
+        proxy_header X-Real-IP {remote}
+        proxy_header X-Forwarded-Proto {scheme}
+        proxy_header X-Forwarded-For {remote}
+    }
 }

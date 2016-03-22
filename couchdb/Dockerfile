@@ -4,6 +4,9 @@ MAINTAINER Antoine GIRARD <antoine.girard@sapk.fr>
 ADD scripts /scripts
 ADD admin-app /admin-app
 
+RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN sed -e 's/^database_dir = .*$/database_dir = \/data/' -i /usr/local/etc/couchdb/default.ini && \
     sed -e 's/^view_index_dir = .*$/view_index_dir = \/data/' -i /usr/local/etc/couchdb/default.ini && \
     chmod +x /scripts/*.sh && touch /.firstrun
