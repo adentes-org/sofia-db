@@ -50,8 +50,10 @@ function generateUsersQRCode(el){
             u = u.replace("@", ":"+el.find(".column:first p:last span").text()+"@")
           }
           //.find("span").text(getRandomPass()))
-          console.log(u);
-          new QRCode('qrcode-user-'+el.attr("data-uID"), {
+          let divID = 'qrcode-user-'+el.attr("data-uID")
+          console.log(u,divID,"#"+divID.replace( /(:|\.|\[|\]|,)/g, "\\$1" ));
+          $("#"+divID.replace( /(:|\.|\[|\]|,)/g, "\\$1" )).html(""); //Remove old QRCode
+          new QRCode(divID, {
             text : u,
             width: w,
             height: w
