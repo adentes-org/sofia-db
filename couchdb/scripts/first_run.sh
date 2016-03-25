@@ -2,7 +2,7 @@
 USER=${COUCHDB_USERNAME:-couchdb}
 PASS=${COUCHDB_PASSWORD:-$(pwgen -s -1 16)}
 DB=${COUCHDB_DBNAME:-"sofia-fiches"}
-GENERATE_TEST_DATA=${SOFIA_TEST:-}
+GENERATE_TEST_DATA=${SOFIA_TEST:-0}
 
 PORT=5984
 HOST=http://$USER:$PASS@127.0.0.1:$PORT
@@ -54,7 +54,7 @@ fi
 
 # Create sample user (equipier)
 if [ ! -z "$GENERATE_TEST_DATA" ]; then
-    for i in {1..10}
+    for i in $(eval echo "{1..$GENERATE_TEST_DATA}")
     do
         U="Team$i"
         P=$(pwgen -s -1 6)

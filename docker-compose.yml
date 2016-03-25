@@ -7,7 +7,7 @@ services:
       - COUCHDB_USERNAME=username
       - COUCHDB_PASSWORD=userpass
       - COUCHDB_DBNAME=sofia-fiches
-  #    - SOFIA_TEST=true #Generate 10 testing users
+#      - SOFIA_TEST=100 #Generate 100 testing users
     volumes:
       - ./couchdb/data:/data
 #    ports:     # Publish if you want to don't use a front-end or publish on loopback
