@@ -1,4 +1,4 @@
-{$HOSTNAME}, http://{$HOSTNAME}, https://{$HOSTNAME} {
+{$HOSTNAME} {
   gzip
   root /dev/null
   proxy / http://couchdb:5984 {
