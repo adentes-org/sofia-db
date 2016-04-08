@@ -3,6 +3,26 @@ var db = {};
 function getRandomPass(){
   return Math.random().toString(36).substr(2, 5)
 }
+function updtUsersList(){
+        console.log('Updating users list ...');
+        $('#teams>button').attr('disabled', 'disabled').text('Sending ...').blur();
+
+        var list = []
+        $("#teams>table>tbody>tr[data-name]").each(function(){list.push($(this).attr("data-name"))});
+        console.log(list);
+        db.fiches.get('_design/sofia-config').then(function(doc) {
+          doc.users = list;
+          return db.fiches.put(doc);
+        }).then(function(result) {
+          // handle response
+          console.log(result);
+          $('#memo textarea').attr('data-rev', result.rev);
+          $('#teams>button').removeAttr('disabled').text('Sauvegardé !').css('background-color', 'green');
+          window.setTimeout('$("#teams>button").text("Update team list in App").css("background-color", "#9b4dca")', 3000);
+        }).catch(function (err) {
+          console.log(err);
+        });
+}
 function resetAllUsersPassword(){
         if (!confirm("This will reset ALL users password ! Are you sure ?")){
           return;
@@ -115,7 +135,6 @@ function generateUsersData(){
               // handle err
               console.log(err);
   });
-
 }
 function addUserToTable(user) {
         $('#teams>table>tbody').append('<tr data-name=\'' + user.name + '\' data-id=\'' + user._id + '\' data-rev=\'' + user._rev + '\'><td>' + user.name + '</td><td><button class=\'button button-outline\' onclick=\'resetPass(this)\' >Reset</button></td><td>' + JSON.stringify(user.roles) + '</td><td><button class=\'button button-outline\' onclick=\'delUser(this)\' >Delete</button></td></tr>');
@@ -162,6 +181,7 @@ function delUser(el) {
         if (confirm('Etes vous sur de supprimer : ' + name + ' ?')) {
           db.users.remove(id, rev).then(function (response) {
             tr.remove();
+            updtUsersList();
           }).catch(function (err) {
             console.log(err);
             alert(err.message);
@@ -195,6 +215,7 @@ function addUser() {
           window.setTimeout('$("#add-user button").text("Valider").css("background-color", "#9b4dca")', 1000);
           user._rev = response.rev;
           addUserToTable(user);
+          updtUsersList();
         }).catch(function (err) {
           console.log(err);
           alert(err.message);
@@ -208,7 +229,9 @@ function updateMemo() {
         $('#memo>button').attr('disabled', 'disabled').text('Sending ...').blur();
         console.log('Updating memo ...', attachment, textarea.attr('data-rev'));
         //*
-        db.fiches.putAttachment('_design/sofia-config', 'memo.html', textarea.attr('data-rev'), attachment, 'text/html').then(function (result) {
+        db.fiches.get('_design/sofia-config').then(function(doc) {
+          return db.fiches.putAttachment('_design/sofia-config', 'memo.html',  doc._rev, attachment, 'text/html');
+        }).then(function (result) {
           // handle result
           console.log(result);
           textarea.attr('data-rev', result.rev);
