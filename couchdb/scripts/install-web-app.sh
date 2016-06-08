@@ -8,7 +8,7 @@ TMP_FILE=/tmp/upload-webapp-data
 
 function encodeFile() {
     #echo $1
-    openssl base64 < "web-app/www/$1" | tr '\n' ' ';
+    openssl base64 < "$1" | tr '\n' ' ';
 }
 function addFile() {
     #$1:file $2:type $3:tmpFile
@@ -18,6 +18,11 @@ function addFile() {
        \"data\": \"$(encodeFile $1)\"
     }," >> $3
 }
+
+export -f encodeFile
+export -f addFile
+export TMP_FILE
+
 echo "deleting any existing database: \"$APP_DB\"..."
 curl -X DELETE $HOST/$APP_DB
 
@@ -30,20 +35,18 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 echo "Getting webapp..."
 
 git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app 
-
-echo "Building web app ..."
-npm install && gulp 
+npm install && bower-installer && gulp 
 cd www
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
 
-find ./assets -type f -name '*.html' -exec addFile '{}' "text/html" "$TMP_FILE" \;
-find ./assets -type f -name '*.tmpl' -exec addFile '{}' "text/html" "$TMP_FILE" \;
-find ./assets/img -type f -name '*.png' -exec addFile '{}' "image/png" "$TMP_FILE" \;
+find -type f -name '*.html' -exec  bash -c 'addFile "$0" "text/html" "$TMP_FILE"' {} \;
+find assets -type f -name '*.tmpl' -exec  bash -c 'addFile "$0" "text/html" "$TMP_FILE"' {} \;
+find assets/img -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;
 
-find ./dist -type f -name '*.js' -exec addFile '{}' "application/javascript" "$TMP_FILE" \;
-find ./dist -type f -name '*.css' -exec addFile '{}' "text/css" "$TMP_FILE" \;
+find dist -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
+find dist -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
 
 sed -i '$ s/.$//' $TMP_FILE
 echo "  }
@@ -51,4 +54,8 @@ echo "  }
 
 curl -X PUT $HOST/$APP_DB/_design/sofia-app -H 'Content-Type: application/json' -d "@$TMP_FILE"
 
+echo "Cleaning ..."
+rm $TMP_FILE 
 cd ../../ && rm -Rf web-app/
+
+
