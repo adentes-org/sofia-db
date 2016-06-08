@@ -12,6 +12,7 @@ function encodeFile() {
 }
 function addFile() {
     #$1:file $2:type $3:tmpFile
+    echo "Adding ($2) : $1"
     echo "   \"$1\": {
        \"content_type\": \"$2\",
        \"data\": \"$(encodeFile $1)\"
