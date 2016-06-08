@@ -29,7 +29,11 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 
 echo "Getting webapp..."
 
-git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app && gulp && cd www
+git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app 
+
+Écho "Building web app ..."
+nom install && gulp 
+cd www
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
