@@ -41,7 +41,8 @@ cd www
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
 
-find -type f -name '*.html' -exec  bash -c 'addFile "$0" "text/html" "$TMP_FILE"' {} \;
+addFile index.html "text/html" "$TMP_FILE"
+find assets -type f -name '*.html' -exec  bash -c 'addFile "$0" "text/html" "$TMP_FILE"' {} \;
 find assets -type f -name '*.tmpl' -exec  bash -c 'addFile "$0" "text/html" "$TMP_FILE"' {} \;
 find assets/img -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;
 
