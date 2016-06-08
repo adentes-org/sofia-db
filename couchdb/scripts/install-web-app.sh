@@ -31,8 +31,8 @@ echo "Getting webapp..."
 
 git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app 
 
-Écho "Building web app ..."
-nom install && gulp 
+echo "Building web app ..."
+npm install && gulp 
 cd www
 
 echo "Uploading files ..."
