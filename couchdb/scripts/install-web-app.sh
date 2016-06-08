@@ -28,24 +28,22 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 
 echo "Getting webapp..."
 
-git clone https://github.com/adentes-org/SOFIA.git "web-app/"
+git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app && gulp && cd www
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
 
-fileList="index.html";
-for file in $fileList
-do
-   addFile "$file" "text/html" "$TMP_FILE"
-done
-fileList="assets/img/logo.png";
-for file in $fileList
-do
-   addFile "$file" "image/png" "$TMP_FILE"
-done
+find ./assets -type f -name '*.html' -exec addFile '{}' "text/html" "$TMP_FILE" \;
+find ./assets -type f -name '*.tmpl' -exec addFile '{}' "text/html" "$TMP_FILE" \;
+find ./assets/img -type f -name '*.png' -exec addFile '{}' "image/png" "$TMP_FILE" \;
+
+find ./dist -type f -name '*.js' -exec addFile '{}' "application/javascript" "$TMP_FILE" \;
+find ./dist -type f -name '*.css' -exec addFile '{}' "text/css" "$TMP_FILE" \;
 
 sed -i '$ s/.$//' $TMP_FILE
 echo "  }
 }" >> $TMP_FILE
 
 curl -X PUT $HOST/$APP_DB/_design/sofia-app -H 'Content-Type: application/json' -d "@$TMP_FILE"
+
+cd ../../ && rm -Rf web-app/
