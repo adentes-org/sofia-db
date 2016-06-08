@@ -51,6 +51,8 @@ fi
 
 # Create Admin App Database
 (cd / && /bin/bash scripts/install-admin-app.sh $HOST "sofia-admin" )
+# Create Web App Database
+(cd / && /bin/bash scripts/install-web-app.sh $HOST "sofia-app" )
 
 # Create sample user (equipier)
 if [ ! -z "$GENERATE_TEST_DATA" ]; then
