@@ -54,8 +54,12 @@ echo "  }
 
 curl -X PUT $HOST/$APP_DB/_design/sofia-app -H 'Content-Type: application/json' -d "@$TMP_FILE"
 
+echo "Compacting database $APP_DB"
+curl -X POST  -H 'Content-Type: application/json' $HOST/$APP_DB/_compact
+
+echo "Admin app avalaible at : /$APP_DB/_design/sofia-app/index.html"
+
 echo "Cleaning ..."
 rm $TMP_FILE 
 cd ../../ && rm -Rf web-app/
-
 
