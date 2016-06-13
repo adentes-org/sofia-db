@@ -50,6 +50,9 @@ find assets/img -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "
 find dist -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
 find dist -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
 
+find dist -type f -name '*.woff' -exec  bash -c 'addFile "$0" "application/x-font-woff" "$TMP_FILE"' {} \;
+find dist -type f -name '*.woff2' -exec  bash -c 'addFile "$0" "application/font-woff2" "$TMP_FILE"' {} \;
+
 sed -i '$ s/.$//' $TMP_FILE
 echo "  }
 }" >> $TMP_FILE
