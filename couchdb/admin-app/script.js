@@ -3,6 +3,25 @@ var db = {};
 function getRandomPass(){
   return Math.random().toString(36).substr(2, 5)
 }
+function getConflicts(){
+	db.fiches.allDocs({
+			include_docs: true,
+			conflicts: true,
+  			attachments: true
+		}).then(function(result){
+			console.log(result);
+	    		$.each(result.rows, function (index, obj) {
+				//console.log(obj.doc)
+				if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
+					//We got conflict
+	                                console.log("Confilct !" , obj.doc);
+					$(".page#conflict>.row").append('<div class="column">'+obj.doc._id+'</div>')
+				}
+			});
+		}).catch(function (err) {
+  			console.log(err);
+		});
+}
 function updtUsersList(){
         console.log('Updating users list ...');
         $('#teams>button').attr('disabled', 'disabled').text('Sending ...').blur();
