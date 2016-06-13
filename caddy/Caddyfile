@@ -1,6 +1,7 @@
 {$HOSTNAME} {
   gzip
   root /dev/null
+  cors / http://adentes-org.github.io https://adentes-org.github.io http://www.adentes.org https://www.adentes.org
   proxy / http://couchdb:5984 {
         proxy_header Host {host}
         proxy_header X-Real-IP {remote}
