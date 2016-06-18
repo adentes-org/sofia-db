@@ -35,8 +35,9 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 echo "Getting webapp..."
 
 git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app 
-npm install && bower-installer && gulp 
-cd www
+#npm install && bower-installer && gulp 
+#cd www
+git checkout gh-pages
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
@@ -66,5 +67,5 @@ echo "Admin app avalaible at : /$APP_DB/_design/sofia-app/index.html"
 
 echo "Cleaning ..."
 rm $TMP_FILE 
-cd ../../ && rm -Rf web-app/
-
+#cd ../../ && rm -Rf web-app/
+cd ../ && rm -Rf web-app/
