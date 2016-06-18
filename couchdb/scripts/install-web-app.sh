@@ -35,8 +35,9 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 echo "Getting webapp..."
 
 git clone https://github.com/adentes-org/SOFIA.git "web-app/" && cd web-app 
-npm install && bower-installer && gulp 
-cd www
+#npm install && bower-installer && gulp 
+#cd www
+git checkout gh-pages
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
@@ -49,6 +50,9 @@ find assets/img -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "
 
 find dist -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
 find dist -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
+
+find dist -type f -name '*.woff' -exec  bash -c 'addFile "$0" "application/x-font-woff" "$TMP_FILE"' {} \;
+find dist -type f -name '*.woff2' -exec  bash -c 'addFile "$0" "application/font-woff2" "$TMP_FILE"' {} \;
 
 sed -i '$ s/.$//' $TMP_FILE
 echo "  }
@@ -63,5 +67,5 @@ echo "Admin app avalaible at : /$APP_DB/_design/sofia-app/index.html"
 
 echo "Cleaning ..."
 rm $TMP_FILE 
-cd ../../ && rm -Rf web-app/
-
+#cd ../../ && rm -Rf web-app/
+cd ../ && rm -Rf web-app/
