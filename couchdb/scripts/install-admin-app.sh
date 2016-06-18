@@ -3,12 +3,26 @@
 
 HOST=$1
 ADMIN_DB=$2
+TMP_FILE=/tmp/upload-data
 #ID=$(curl -X GET $HOST/$ADMIN_DB/_design/sofia-admin | cut -d"\"" -f8)
 
 function encodeFile() {
     #echo $1
-    openssl base64 < "admin-app/$1" | tr '\n' ' ';
+    openssl base64 < "$1" | tr '\n' ' ';
 }
+function addFile() {
+    #$1:file $2:type $3:tmpFile
+    echo "Adding ($2) : $1"
+    echo "   \"$1\": {
+       \"content_type\": \"$2\",
+       \"data\": \"$(encodeFile $1)\"
+    }," >> $3
+}
+
+export -f encodeFile
+export -f addFile
+export TMP_FILE
+
 echo "deleting any existing database: \"$ADMIN_DB\"..."
 curl -X DELETE $HOST/$ADMIN_DB
 
@@ -22,55 +36,27 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 #curl -X DELETE $HOST/$ADMIN_DB/_design/sofia-admin?rev=$(curl -X GET $HOST/$ADMIN_DB/_design/sofia-admin | cut -d"\"" -f8)
 
 echo "Uploading files ..."
-echo "{\"_attachments\": { " > /tmp/upload-data
+echo "{\"_attachments\": { " > $TMP_FILE
 #$(openssl base64 < "admin-app/$file" | tr '\n' ' ')
 
+cd admin-app
+addFile index.html "text/html" "$TMP_FILE"
+addFile style.css  "text/css" "$TMP_FILE"
+addFile script.js  "application/javascript" "$TMP_FILE"
 
-fileList="index.html";
-for file in $fileList
-do
-    echo "   \"$file\": {
-       \"content_type\": \"text/html\",
-       \"data\": \"$(encodeFile $file)\"
-    }," >> /tmp/upload-data
-done
+find lib -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
+find lib -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;
+find lib -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
 
-fileList="lib/milligram.min.css lib/trumbowyg/ui/trumbowyg.min.css";
-for file in $fileList
-do
-    echo "   \"$file\": {
-       \"content_type\": \"text/css\",
-       \"data\": \"$(encodeFile $file)\"
-    }," >> /tmp/upload-data
-done
-
-fileList="lib/trumbowyg/ui/images/icons-black-2x.png lib/trumbowyg/ui/images/icons-black.png";
-for file in $fileList
-do
-    echo "   \"$file\": {
-       \"content_type\": \"image/png\",
-       \"data\": \"$(encodeFile $file)\"
-    }," >> /tmp/upload-data
-done
-
-fileList="script.js lib/jquery-2.2.0.min.js lib/pouchdb-5.2.1.min.js lib/qrcode.min.js lib/trumbowyg/trumbowyg.min.js";
-for file in $fileList
-do
-    echo "   \"$file\": {
-       \"content_type\": \"application/javascript\",
-       \"data\": \"$(encodeFile $file)\"
-    }," >> /tmp/upload-data
-done
-
-sed -i '$ s/.$//' /tmp/upload-data
+sed -i '$ s/.$//' "$TMP_FILE"
 echo "  }
-}" >> /tmp/upload-data
-
+}" >> "$TMP_FILE"
+cd ..
 #cat /tmp/upload-data
 
-curl -X PUT $HOST/$ADMIN_DB/_design/sofia-admin -H 'Content-Type: application/json' -d @/tmp/upload-data
+curl -X PUT $HOST/$ADMIN_DB/_design/sofia-admin -H 'Content-Type: application/json' -d "@$TMP_FILE"
 
-rm /tmp/upload-data
+rm "$TMP_FILE"
 
 echo "Compacting database $ADMIN_DB"
 curl -X POST  -H 'Content-Type: application/json' $HOST/$ADMIN_DB/_compact
