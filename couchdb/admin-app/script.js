@@ -7,17 +7,18 @@ function getConflicts(){
 	db.fiches.allDocs({
 			include_docs: true,
 			conflicts: true,
-  			attachments: true
+  		attachments: true
 		}).then(function(result){
 			console.log(result);
-	    		$.each(result.rows, function (index, obj) {
-				//console.log(obj.doc)
-				if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
-					//We got conflict
-	                                console.log("Confilct !" , obj.doc);
-					$(".page#conflict>.row").append('<div class="column">'+obj.doc._id+'</div>')
-				}
-			});
+	    $.each(result.rows, function (index, obj) {
+  			//console.log(obj.doc)
+        $(".page#conflict>.row").append('');
+  			if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
+  				//We got conflict
+  	      console.log("Confilct !" , obj.doc);
+  				$(".page#conflict>.row").append('<div class="column">'+obj.doc._id+'</div>')
+  			}
+		  });
 		}).catch(function (err) {
   			console.log(err);
 		});
