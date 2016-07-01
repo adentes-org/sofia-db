@@ -61,6 +61,7 @@ function formatStats(stats){
 			if(affections.length>1){
 				size = (100-specificOption.series.length*(50/(affections.length-1)))+"%"
 			}
+			console.log(size);
 			specificOption.series.push({
 				name: name,
 			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
