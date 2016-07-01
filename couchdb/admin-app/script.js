@@ -1,5 +1,29 @@
 /* global QRCode PouchDB */
 var db = {};
+function getStats(){
+	db.fiches.allDocs({include_docs: true}).then(function(result){
+		console.log(result);
+		var stats = {
+			fiche : {
+				total:0
+				open:0,
+				close:0
+			}
+		};
+		$.each(result.rows, function (index, obj) {
+  			//console.log(obj.doc)
+  			var d = obj.doc;
+  			//if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
+  			stats.fiche.total++;
+  			if (d.closed){
+  				stats.fiche.close++;
+  			}else{
+  				stats.fiche.open++;
+  			}
+		});
+		console.log(stats);
+	});
+}
 function getRandomPass(){
   return Math.random().toString(36).substr(2, 5)
 }
