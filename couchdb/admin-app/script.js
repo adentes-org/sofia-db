@@ -30,7 +30,6 @@ function getStats(){
 			if (d._id[0] === '_') //Maybe a _design doc
 				return;
   			//if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
-  			stats.fiche.total++;
   			if(typeof stats.owner[d.owner_id] === "undefined" ){
 	  			stats.owner[d.owner_id] = {
 					total:0,
@@ -47,6 +46,9 @@ function getStats(){
 					deleted:0
 				}
   			}
+  			stats.fiche.total++;
+  			stats.owner[d.owner_id].total++;
+  			stats.affection[d.primaryAffection].total++;
   			if (d.deleted){
   				stats.fiche.deleted++;
   				stats.owner[d.owner_id].deleted++;
