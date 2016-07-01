@@ -13,6 +13,8 @@ function getStats(){
 		$.each(result.rows, function (index, obj) {
   			//console.log(obj.doc)
   			var d = obj.doc;
+			if (d._id[0] === '_') //Maybe a _design doc
+				return;
   			//if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
   			stats.fiche.total++;
   			if (d.closed){
