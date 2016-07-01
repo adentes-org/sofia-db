@@ -39,7 +39,7 @@ function formatStats(stats){
 		            data: [open]
 		        }]	
     		}
-    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",100)
+    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
 	});
 	html += '</div>'
 	html += '<div id="affections">'
@@ -50,7 +50,7 @@ function formatStats(stats){
 			affections = stats.owner[id].affection; 
 		}
     		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
-		$.each(affection, function (name, obj) {
+		$.each(affections, function (name, obj) {
 			html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
 		})
 		html += '</div>'
