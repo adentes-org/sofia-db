@@ -101,7 +101,7 @@ function formatStats(stats){
 		if(typeof stats.owner[id] === "undefined"){
 			return; //Skip if not in DB
 		}
-    		html += '<div id="container-owners-'+id+'" style="width: 300px; height: 200px; float: left">';
+    		html += '<div id="container-owner-'+id+'" style="width: 300px; height: 200px; float: left">';
     		var specificOption = {
 		        title: {
 		            text: id
@@ -127,9 +127,10 @@ function formatStats(stats){
 		            data: [stats.owner[id].open]
 		        }]	
     		}
-    		console.log("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});")
-    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",500)
-    		window.setTimeout("console.log($('#container-owners-"+id+"').length);",500)
+    		console.log("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});")
+    		//window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",500)
+    		window.setTimeout("'#container-owner-"+id+"'",500)
+    		window.setTimeout("console.log($('#container-owner-"+id+"').length);",500)
 	});
 	html += '</div>'
 	//html += JSON.stringify(stats)
