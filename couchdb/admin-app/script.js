@@ -3,6 +3,128 @@ var db = {};
 function getRandomPass(){
   return Math.random().toString(36).substr(2, 5)
 }
+function validateMerge() {
+  $('#conflict>button').attr('disabled', 'disabled').text('Sending ...').blur();
+  var obj = JSON.parse($(".page#conflict>#editor>#result>.raw").html()); //TODO check obj ?
+  obj.events.push({
+            type : "action",
+            action : "AdminMergeConflict",
+            message : "Conflict detected and merged by admin!",
+            /* This take to much space
+            diff : objectDiff.diff(JSON.parse($(".page#conflict>#editor>#src").html()),obj),
+            conflict : JSON.parse($(".page#conflict>#editor>#conflict").html()),
+            */
+            timestamp : Date.now(),
+            user :  "admin" //TODO
+  });
+  db.fiches.put(obj).then(function () {
+    $(".page#conflict>#editor>#src").html("");
+    $(".page#conflict>#editor>#conflict").html("");
+    $(".page#conflict>#editor>#result>.raw").html("");
+    showRaw();
+    $('#conflict>button').text('Removing conflict ...').blur();
+    db.fiches.remove($('#conflict>button').attr("data-id"), $('#conflict>button').attr("data-rev")).then(function () {
+      $('#conflict>button').removeAttr('data-id').removeAttr('data-rev');
+      $('#conflict>button').text('Finish !').css('background-color', 'green');
+      getConflicts(); //update conflict list
+      window.setTimeout('$("#conflict>button").text("Validate Merge").css("background-color", "#9b4dca")', 3000);
+      // yay, we're done
+    }).catch(function (err) {
+        // handle any errors
+        console.log(err);
+        alert(err.message);
+    });
+  }).catch(function (err) {
+    console.log(err);
+    alert(err.message);
+  });
+}
+function mergeConflict(o,n,rev) { // o : obj in db, n: obj to commit
+   /* This will merge and keep a maximum of information (things deleted previously could be added) */
+   var ret = $.extend({},o,{
+     close_context : n.close_context,
+     deleted : n.deleted,
+     closed : n.closed,
+     patient : n.patient,
+     origin : n.origin,
+     owner_id : n.owner_id,
+     primaryAffection : n.primaryAffection,
+     uid : n.uid
+   }); //Close and overwrite some parts that can be directly
+   $.each(n.pathologys, function(id,val){
+     if ($.inArray(val,ret.pathologys) === -1) { //Not found
+       ret.pathologys.push(val);
+     }
+   });
+   $.each(n.events, function(id,val){
+     /*
+     if ($.inArray(val,ret.events) === -1) { //Not found
+       ret.events.push(val);
+     }
+     */
+       var found = false;
+       var searching = JSON.stringify(val);
+       $.each(ret.events, function(i,v){
+         if(!found && JSON.stringify(v) === searching ){
+           found = true;
+         }
+       });
+       if(!found){
+         ret.events.push(val);
+       }
+   });
+   ret.events.sort(function(x, y){ //Order
+     return x.timestamp - y.timestamp;
+   });
+   /* */
+   ret._rev=rev;
+   return ret;
+   console.log(ret);
+}
+function showRaw(){
+  console.log("Showing raw")
+  $("button[onclick='showRaw()']").attr('disabled', 'disabled');
+  $("button[onclick='showDiff()']").removeAttr('disabled');
+  $(".page#conflict>#editor>#result>.diffResult").hide()
+  $(".page#conflict>#editor>#result>.raw").show()
+}
+function showDiff(){
+  console.log("Showing diff")
+  $("button[onclick='showRaw()']").removeAttr('disabled');
+  $("button[onclick='showDiff()']").attr('disabled', 'disabled');
+  $(".page#conflict>#editor>#result>.diffResult").show()
+  $(".page#conflict>#editor>#result>.raw").hide()
+  var src = JSON.parse($(".page#conflict>#editor>#src").html());
+  var result = JSON.parse($(".page#conflict>#editor>#result>.raw").html());
+  console.log(src,result);
+  var diff = objectDiff.diff(src,result);
+  console.log(diff);
+  $(".page#conflict>#editor>#result>.diffResult").html(objectDiff.convertToXMLString(diff))
+}
+function resolveConflict(id,rev){
+  console.log("conflict getting doc:",id,rev);
+  db.fiches.get(id).then(function(doc) {
+    db.fiches.get(id, {rev: rev}).then(function (conflict) {
+      // do something with the doc
+        console.log("conflict resolution:",doc,conflict);
+        $(".page#conflict>#editor>#src").html(JSON.stringify(doc));
+        $(".page#conflict>#editor>#conflict").html(JSON.stringify(conflict));
+        if(doc.events[doc.events.length-1].timestamp>conflict.events[conflict.events.length-1].timestamp){
+          $(".page#conflict>#editor>#result>.raw").html(JSON.stringify(mergeConflict(conflict,doc,doc._rev))); //The doc in DB is more recent that the conflict
+        }else {
+          $(".page#conflict>#editor>#result>.raw").html(JSON.stringify(mergeConflict(doc,conflict,doc._rev))); //The conflict in DB is more recent that the conflict
+        }
+        showRaw();
+        $('#conflict>button').removeAttr('disabled').attr("data-id",id).attr("data-rev",rev)
+    }).catch(function (err) {
+      // handle any errors
+      alert(err.message)
+    });
+  }).catch(function (err) {
+    // handle any errors
+    alert(err.message)
+  });
+}
 function getConflicts(){
 	db.fiches.allDocs({
 			include_docs: true,
@@ -10,15 +132,24 @@ function getConflicts(){
   		attachments: true
 		}).then(function(result){
 			console.log(result);
+      var html='<div class="row">';
 	    $.each(result.rows, function (index, obj) {
   			//console.log(obj.doc)
-        $(".page#conflict>.row").append('');
   			if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
   				//We got conflict
-  	      console.log("Confilct !" , obj.doc);
-  				$(".page#conflict>.row").append('<div class="column">'+obj.doc._id+'</div>')
+  	      console.log("Conflict !" , obj.doc);
+          if(index>0 && index%3 === 0){
+            html+='</div><div class="row">';
+          }
+          var conflicts = ""
+    	    $.each(obj.doc._conflicts, function (i, conflict) {
+            conflicts += "<a class='button button-small' onclick='resolveConflict(\""+obj.doc._id+"\",\""+conflict+"\")' href='#'>"+conflict+"</a>";
+          });
+  				html+='<div class="column">'+obj.doc._id+'<p>'+conflicts+'</p>'+'</div>';
   			}
 		  });
+      html+='</div>'
+      $(".page#conflict>#conflicts").html(html);
 		}).catch(function (err) {
   			console.log(err);
 		});
