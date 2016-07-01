@@ -103,6 +103,10 @@ function formatStats(stats){
 		        title: {
 		            text: id
 		        },
+		        yAxis: {
+		            min: 0,
+			    max: params.max
+			},
 		        series: [{
 		            name: 'Open',
 		            data: [stats.owner[id].open],
