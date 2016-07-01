@@ -106,7 +106,7 @@ function formatStats(stats){
 		}
     		html += '<div id="container-owners-'+id+'" style="width: 300px; height: 200px; float: left">';
     		console.log("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});")
-    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});",5000)
+    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});",15000)
 	});
 	html += '</div>'
 	html += JSON.stringify(stats)
