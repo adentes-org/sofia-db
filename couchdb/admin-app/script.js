@@ -54,8 +54,9 @@ function formatStats(stats){
     		        yAxis: {
             			min: 0,
             			max: stats.fiche.total - stats.fiche.deleted
-    		        },series: []
-    		}
+    		        },
+    		        series: []
+    		};
 		$.each(affections, function (name, obj) {
 			if(name.trim() === "" || name === null){ //empty name
 				name = "undefined";
