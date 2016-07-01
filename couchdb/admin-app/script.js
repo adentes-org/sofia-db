@@ -13,7 +13,9 @@ var gaugeOptions= {
         title: {
             text: 'Team'
         },
-
+        credits: {
+            enabled: false
+        },
         pane: {
             startAngle: -150,
             endAngle: 150,
@@ -83,15 +85,7 @@ var gaugeOptions= {
                 to: 200,
                 color: '#DF5353' // red
             }]
-        },
-
-        series: [{
-            name: 'open',
-            data: [80],
-            tooltip: {
-                valueSuffix: ' open'
-            }
-        }]
+        }
 
 };
 function formatStats(stats){
@@ -105,11 +99,24 @@ function formatStats(stats){
 			return; //Skip if not in DB
 		}
     		html += '<div id="container-owners-'+id+'" style="width: 300px; height: 200px; float: left">';
-    		console.log("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});")
-    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});",15000)
+    		var specificOption = {
+		        title: {
+		            text: id
+		        },
+		        series: [{
+		            name: 'Open',
+		            data: [stats.owner[id].open],
+		            tooltip: {
+		                valueSuffix: ' fiche(s)'
+		            }
+		        }]	
+    		}
+    		console.log("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});")
+    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",500)
+    		window.setTimeout("console.log($('#container-owners-"+id+"').length);",500)
 	});
 	html += '</div>'
-	html += JSON.stringify(stats)
+	//html += JSON.stringify(stats)
 	return html;
 	//return JSON.stringify(stats);
 }
