@@ -7,7 +7,14 @@ function getStats(){
 			fiche : {
 				total:0,
 				open:0,
-				close:0
+				close:0,
+				deleted:0
+			},
+			owner : {
+				
+			},
+			affection : {
+				
 			}
 		};
 		$.each(result.rows, function (index, obj) {
@@ -17,10 +24,34 @@ function getStats(){
 				return;
   			//if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
   			stats.fiche.total++;
-  			if (d.closed){
+  			if(typeof stats.owner[d.owner_id] === "undefined" ){
+	  			stats.owner[d.owner_id] = {
+					total:0,
+					open:0,
+					close:0,
+					deleted:0
+				}
+  			}
+  			if(typeof stats.affection[d.primaryAffection] === "undefined" ){
+	  			stats.affection[d.primaryAffection] = {
+					total:0,
+					open:0,
+					close:0,
+					deleted:0
+				}
+  			}
+  			if (d.deleted){
+  				stats.fiche.deleted++;
+  				stats.owner[d.owner_id].deleted++;
+  				stats.affection[d.primaryAffection].deleted++;
+  			}else if (d.closed){
   				stats.fiche.close++;
+  				stats.owner[d.owner_id].close++;
+  				stats.affection[d.primaryAffection].close++;
   			}else{
   				stats.fiche.open++;
+  				stats.owner[d.owner_id].open++;
+  				stats.affection[d.primaryAffection].open++;
   			}
 		});
 		console.log(stats);
