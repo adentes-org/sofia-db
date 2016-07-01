@@ -1,5 +1,12 @@
 /* global QRCode PouchDB */
 var db = {};
+function formatStats(stats){
+	var ownerToShow = {
+		"username" : {max:200},
+		"echo1": {max:10}
+	}
+	return JSON.stringify(stats);
+}
 function getStats(){
 	db.fiches.allDocs({include_docs: true}).then(function(result){
 		console.log(result);
@@ -55,7 +62,7 @@ function getStats(){
   			}
 		});
 		console.log(stats);
-		$("#stat_vue").html(JSON.stringify(stats));
+		$("#stat_vue").html(formatStats(stats));
 	});
 }
 function getRandomPass(){
