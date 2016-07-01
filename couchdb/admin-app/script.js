@@ -90,7 +90,7 @@ var gaugeOptions= {
 };
 function formatStats(stats){
 	var ownerToShow = {
-		"username" : {max:200},
+		"username" : {max:20},
 		"echo1": {max:10}
 	}
 	var html = '<div id="owners">'
