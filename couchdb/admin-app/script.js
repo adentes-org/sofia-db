@@ -127,10 +127,7 @@ function formatStats(stats){
 		            data: [stats.owner[id].open]
 		        }]	
     		}
-    		console.log("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});")
-    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",500)
-    		window.setTimeout("'#container-owner-"+id+"'",500)
-    		window.setTimeout("console.log($('#container-owner-"+id+"').length);",500)
+    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",100)
 	});
 	html += '</div>'
 	//html += JSON.stringify(stats)
