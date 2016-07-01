@@ -9,9 +9,9 @@ function formatStats(stats){
 	}
 	var html = '<div id="owners">'
 	$.each(ownerToShow, function (id, params) {
+		var  open = stats.owner[id].open
 		if(typeof stats.owner[id] === "undefined"){
-			html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"><center>No data for : '+id+'</center></div>';
-			return; //Skip if not in DB
+			open = 0 //Set to zero if team doens't onw any fiche
 		}
     		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
     		var specificOption = {
@@ -36,7 +36,7 @@ function formatStats(stats){
 		            }]
 			},
 		        series: [{
-		            data: [stats.owner[id].open]
+		            data: [open]
 		        }]	
     		}
     		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",100)
