@@ -51,6 +51,9 @@ function formatStats(stats){
 		}
     		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
 		$.each(affections, function (name, obj) {
+			if(name.trim() === "" || name === null){ //empty name
+				name = "undefined";
+			}
 			//html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
 			html += '<p>'+name+' : '+obj.total+'</p>';
 		})
