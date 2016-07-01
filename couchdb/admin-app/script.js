@@ -42,6 +42,20 @@ function formatStats(stats){
     		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",100)
 	});
 	html += '</div>'
+	html += '<div id="affections">'
+	$.each(ownerToShow, function (id, params) {
+  		//stats.owner[d.owner_id].affection[d.primaryAffection].total++;
+		var  affections = {}; //Set to empty by default
+		if(typeof stats.owner[id] !== "undefined"){
+			affections = stats.owner[id].affection; 
+		}
+    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
+		$.each(affection, function (name, obj) {
+			html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
+		})
+		html += '</div>'
+	});
+	html += '</div>'
 	//html += JSON.stringify(stats)
 	return html;
 	//return JSON.stringify(stats);
@@ -54,12 +68,12 @@ function getStats(){
 				total:0,
 				open:0,
 				close:0,
-				deleted:0
+				deleted:0,
+				affection : {
+					
+				}
 			},
 			owner : {
-				
-			},
-			affection : {
 				
 			}
 		};
@@ -74,11 +88,20 @@ function getStats(){
 					total:0,
 					open:0,
 					close:0,
+					deleted:0,
+					affection : {}
+				}
+  			}
+  			if(typeof stats.owner[d.owner_id].affection[d.primaryAffection] === "undefined" ){
+	  			stats.owner[d.owner_id].affection[d.primaryAffection] = {
+					total:0,
+					open:0,
+					close:0,
 					deleted:0
 				}
   			}
-  			if(typeof stats.affection[d.primaryAffection] === "undefined" ){
-	  			stats.affection[d.primaryAffection] = {
+  			if(typeof stats.fiche.affection[d.primaryAffection] === "undefined" ){
+	  			stats.fiche.affection[d.primaryAffection] = {
 					total:0,
 					open:0,
 					close:0,
@@ -87,19 +110,23 @@ function getStats(){
   			}
   			stats.fiche.total++;
   			stats.owner[d.owner_id].total++;
-  			stats.affection[d.primaryAffection].total++;
+  			stats.fiche.affection[d.primaryAffection].total++;
+  			stats.owner[d.owner_id].affection[d.primaryAffection].total++;
   			if (d.deleted){
   				stats.fiche.deleted++;
   				stats.owner[d.owner_id].deleted++;
-  				stats.affection[d.primaryAffection].deleted++;
+  				stats.fiche.affection[d.primaryAffection].deleted++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].deleted++;
   			}else if (d.closed){
   				stats.fiche.close++;
   				stats.owner[d.owner_id].close++;
-  				stats.affection[d.primaryAffection].close++;
+  				stats.fiche.affection[d.primaryAffection].close++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].close++;
   			}else{
   				stats.fiche.open++;
   				stats.owner[d.owner_id].open++;
-  				stats.affection[d.primaryAffection].open++;
+  				stats.fiche.affection[d.primaryAffection].open++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].open++;
   			}
 		});
 		console.log(stats);
