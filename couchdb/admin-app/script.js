@@ -50,14 +50,35 @@ function formatStats(stats){
 			affections = stats.owner[id].affection; 
 		}
     		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
+    		var specificOption = {
+    		        yAxis: {
+            			min: 0,
+            			max: stats.fiche.total - stats.fiche.deleted
+    		        },series: []
+    		}
 		$.each(affections, function (name, obj) {
 			if(name.trim() === "" || name === null){ //empty name
 				name = "undefined";
 			}
 			//html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
-			html += '<p>'+name+' : '+obj.total+'</p>';
+			//html += '<p>'+name+' : '+obj.total+'</p>';
+			var size = "100%"
+			if(affections.length>1){
+				size = (100-specificOption.series.length*(50/(affections.length-1)))+"%"
+			}
+			specificOption.series.push({
+				name: name,
+			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
+			        data: [{
+			                color: Highcharts.getOptions().colors[specificOption.series.length],
+			                radius:size,
+			                innerRadius: size,
+			                y: obj.total  - obj.deleted
+			        }]
+			})
 		})
 		html += '</div>'
+    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
 	});
 	html += '</div>'
 	//html += JSON.stringify(stats)
@@ -638,6 +659,72 @@ function init(){
           });
 }
 
+var gaugeAffectionOptions= {
+	chart: {
+            type: 'solidgauge',
+            marginTop: 50
+        },
+        title: {
+            text: 'Affection by team',
+            style: {
+                fontSize: '24px'
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            borderWidth: 0,
+            backgroundColor: 'none',
+            shadow: false,
+            style: {
+                fontSize: '16px'
+            },
+            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
+            positioner: function (labelWidth, labelHeight) {
+                return {
+                    x: 200 - labelWidth / 2,
+                    y: 180
+                };
+            }
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360,
+            background: [{ // Track for Move
+                outerRadius: '112%',
+                innerRadius: '88%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }, { // Track for Exercise
+                outerRadius: '87%',
+                innerRadius: '63%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }, { // Track for Stand
+                outerRadius: '62%',
+                innerRadius: '38%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }]
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            lineWidth: 0,
+            tickPositions: []
+        },
+        plotOptions: {
+            solidgauge: {
+                borderWidth: '34px',
+                dataLabels: {
+                    enabled: false
+                },
+                linecap: 'round',
+                stickyTracking: false
+            }
+        },
+};
 var gaugeOptions= {
 
         chart: {
