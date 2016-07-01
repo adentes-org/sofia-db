@@ -5,7 +5,7 @@ function getStats(){
 		console.log(result);
 		var stats = {
 			fiche : {
-				total:0
+				total:0,
 				open:0,
 				close:0
 			}
