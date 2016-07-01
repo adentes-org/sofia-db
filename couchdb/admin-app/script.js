@@ -78,7 +78,7 @@ function formatStats(stats){
 			})
 		})
 		html += '</div>'
-    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
+    		window.setTimeout("Highcharts.chart('container-affections-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
 	});
 	html += '</div>'
 	//html += JSON.stringify(stats)
@@ -665,7 +665,7 @@ var gaugeAffectionOptions= {
             marginTop: 50
         },
         title: {
-            text: 'Affection by team',
+            text: 'Affections',
             style: {
                 fontSize: '24px'
             }
