@@ -3,7 +3,9 @@ var db = {};
 function formatStats(stats){
 	var ownerToShow = {
 		"username" : {max:20},
-		"echo1": {max:10}
+		"echo1": {max:10},
+		"golf": {max:5},
+		"Team1": {max:2}
 	}
 	var html = '<div id="owners">'
 	$.each(ownerToShow, function (id, params) {
