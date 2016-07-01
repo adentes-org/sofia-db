@@ -10,6 +10,7 @@ function formatStats(stats){
 	var html = '<div id="owners">'
 	$.each(ownerToShow, function (id, params) {
 		if(typeof stats.owner[id] === "undefined"){
+			html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"><center>No data for : '+id+'</center></div>';
 			return; //Skip if not in DB
 		}
     		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
