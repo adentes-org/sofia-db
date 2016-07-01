@@ -105,7 +105,7 @@ function formatStats(stats){
 			return; //Skip if not in DB
 		}
     		html += '<div id="container-owners-'+id+'" style="width: 300px; height: 200px; float: left">';
-    		window.setTimeout("$('#container-owners-"+id+"').highcharts("+JSON.stringify(gaugeOptions)+")",5000)
+    		window.setTimeout("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(gaugeOptions)+",function callback() {});",5000)
 	});
 	html += '</div>'
 	html += JSON.stringify(stats)
