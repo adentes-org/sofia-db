@@ -9,9 +9,9 @@ function formatStats(stats){
 	}
 	var html = '<div id="owners">'
 	$.each(ownerToShow, function (id, params) {
-		var  open = stats.owner[id].open
-		if(typeof stats.owner[id] === "undefined"){
-			open = 0 //Set to zero if team doens't onw any fiche
+		var  open = 0; //Set to zero by default
+		if(typeof stats.owner[id] !== "undefined"){
+			open = stats.owner[id].open; 
 		}
     		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
     		var specificOption = {
