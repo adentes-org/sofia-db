@@ -49,7 +49,7 @@ function formatStats(stats){
 		if(typeof stats.owner[id] !== "undefined"){
 			affections = stats.owner[id].affection; 
 		}
-    		html += '<div id="container-affections-owner-'+id+'" style="width: 400px; height: 400px; float: left">';
+    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
     		var specificOption = {
     		        yAxis: {
             			min: 0,
@@ -72,9 +72,9 @@ function formatStats(stats){
 			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
 			        data: [{
 			                color: Highcharts.getOptions().colors[specificOption.series.length],
-			                radius:size,
+			                radius: size,
 			                innerRadius: size,
-			                y: obj.total  - obj.deleted
+			                y: (obj.total  - obj.deleted)
 			        }]
 			})
 		})
@@ -668,7 +668,7 @@ var gaugeAffectionOptions= {
         title: {
             text: 'Affections',
             style: {
-                fontSize: '24px'
+                fontSize: '20px'
             }
         },
         credits: {
@@ -681,11 +681,11 @@ var gaugeAffectionOptions= {
             style: {
                 fontSize: '16px'
             },
-            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
+            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}</span>',
             positioner: function (labelWidth, labelHeight) {
                 return {
-                    x: 200 - labelWidth / 2,
-                    y: 180
+                    x: 100 - labelWidth / 2,
+                    y: 100
                 };
             }
         },
