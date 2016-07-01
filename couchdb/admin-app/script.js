@@ -82,7 +82,14 @@ var gaugeOptions= {
                 to: 200,
                 color: '#DF5353' // red
             }]
-	}
+	},
+        series: [{
+            name: 'Open',
+            data: [0],
+            tooltip: {
+                valueSuffix: ' fiche(s)'
+            }
+        }]
 };
 function formatStats(stats){
 	var ownerToShow = {
@@ -117,11 +124,7 @@ function formatStats(stats){
 		            }]
 			},
 		        series: [{
-		            name: 'Open',
-		            data: [stats.owner[id].open],
-		            tooltip: {
-		                valueSuffix: ' fiche(s)'
-		            }
+		            data: [stats.owner[id].open]
 		        }]	
     		}
     		console.log("Highcharts.chart('container-owners-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});")
