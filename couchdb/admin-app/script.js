@@ -49,7 +49,7 @@ function formatStats(stats){
 		if(typeof stats.owner[id] !== "undefined"){
 			affections = stats.owner[id].affection; 
 		}
-    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
+    		html += '<div id="container-affections-owner-'+id+'" style="width: 400px; height: 400px; float: left">';
     		var specificOption = {
     		        yAxis: {
             			min: 0,
