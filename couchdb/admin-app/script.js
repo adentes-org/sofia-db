@@ -22,6 +22,7 @@ function getStats(){
   			}
 		});
 		console.log(stats);
+		$("#stat_vue").html(JSON.stringify(stats));
 	});
 }
 function getRandomPass(){
