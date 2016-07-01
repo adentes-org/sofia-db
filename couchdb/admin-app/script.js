@@ -1,28 +1,162 @@
 /* global QRCode PouchDB */
 var db = {};
+function formatStats(stats){
+	var ownerToShow = {
+		"username" : {max:20},
+		"echo1": {max:10},
+		"golf": {max:5},
+		"Team1": {max:2}
+	}
+	var html = '<div id="owners">'
+	$.each(ownerToShow, function (id, params) {
+		var  open = 0; //Set to zero by default
+		if(typeof stats.owner[id] !== "undefined"){
+			open = stats.owner[id].open; 
+		}
+    		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
+    		var specificOption = {
+		        title: {
+		            text: id
+		        },
+		        yAxis: {
+		            min: 0,
+			    max: params.max,
+		            plotBands: [{
+		                from: 0,
+		                to: params.max*0.6,
+		                color: '#55BF3B' // green
+		            }, {
+		                from: params.max*0.6,
+		                to: params.max*0.8,
+		                color: '#DDDF0D' // yellow
+		            }, {
+		                from: params.max*0.80,
+		                to: params.max,
+		                color: '#DF5353' // red
+		            }]
+			},
+		        series: [{
+		            data: [open]
+		        }]	
+    		}
+    		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
+	});
+	html += '</div>'
+	html += '<div id="affections">'
+	$.each(ownerToShow, function (id, params) {
+  		//stats.owner[d.owner_id].affection[d.primaryAffection].total++;
+		var  affections = {}; //Set to empty by default
+		if(typeof stats.owner[id] !== "undefined"){
+			affections = stats.owner[id].affection; 
+		}
+    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
+    		var specificOption = {
+    		        yAxis: {
+            			min: 0,
+            			max: stats.fiche.total - stats.fiche.deleted
+    		        },
+    		        series: []
+    		};
+		$.each(affections, function (name, obj) {
+			if(name.trim() === "" || name === null){ //empty name
+				name = "undefined";
+			}
+			//html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
+			//html += '<p>'+name+' : '+obj.total+'</p>';
+			var size = "100%"
+			if(affections.length>1){
+				size = (100-specificOption.series.length*(50/(affections.length-1)))+"%"
+			}
+			specificOption.series.push({
+				name: name,
+			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
+			        data: [{
+			                color: Highcharts.getOptions().colors[specificOption.series.length],
+			                radius: size,
+			                innerRadius: size,
+			                y: (obj.total  - obj.deleted)
+			        }]
+			})
+		})
+		html += '</div>'
+    		window.setTimeout("Highcharts.chart('container-affections-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
+	});
+	html += '</div>'
+	//html += JSON.stringify(stats)
+	return html;
+	//return JSON.stringify(stats);
+}
 function getStats(){
 	db.fiches.allDocs({include_docs: true}).then(function(result){
 		console.log(result);
 		var stats = {
 			fiche : {
-				total:0
+				total:0,
 				open:0,
-				close:0
+				close:0,
+				deleted:0,
+				affection : {
+					
+				}
+			},
+			owner : {
+				
 			}
 		};
 		$.each(result.rows, function (index, obj) {
   			//console.log(obj.doc)
   			var d = obj.doc;
+			if (d._id[0] === '_') //Maybe a _design doc
+				return;
   			//if(typeof obj.doc["_conflicts"] !== "undefined" && obj.doc["_conflicts"].length > 0 ){
+  			if(typeof stats.owner[d.owner_id] === "undefined" ){
+	  			stats.owner[d.owner_id] = {
+					total:0,
+					open:0,
+					close:0,
+					deleted:0,
+					affection : {}
+				}
+  			}
+  			if(typeof stats.owner[d.owner_id].affection[d.primaryAffection] === "undefined" ){
+	  			stats.owner[d.owner_id].affection[d.primaryAffection] = {
+					total:0,
+					open:0,
+					close:0,
+					deleted:0
+				}
+  			}
+  			if(typeof stats.fiche.affection[d.primaryAffection] === "undefined" ){
+	  			stats.fiche.affection[d.primaryAffection] = {
+					total:0,
+					open:0,
+					close:0,
+					deleted:0
+				}
+  			}
   			stats.fiche.total++;
-  			if (d.closed){
+  			stats.owner[d.owner_id].total++;
+  			stats.fiche.affection[d.primaryAffection].total++;
+  			stats.owner[d.owner_id].affection[d.primaryAffection].total++;
+  			if (d.deleted){
+  				stats.fiche.deleted++;
+  				stats.owner[d.owner_id].deleted++;
+  				stats.fiche.affection[d.primaryAffection].deleted++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].deleted++;
+  			}else if (d.closed){
   				stats.fiche.close++;
+  				stats.owner[d.owner_id].close++;
+  				stats.fiche.affection[d.primaryAffection].close++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].close++;
   			}else{
   				stats.fiche.open++;
+  				stats.owner[d.owner_id].open++;
+  				stats.fiche.affection[d.primaryAffection].open++;
+  			        stats.owner[d.owner_id].affection[d.primaryAffection].open++;
   			}
 		});
 		console.log(stats);
-		$("#stat_vue").html(JSON.stringify(stats));
+		$("#stat_vue").html(formatStats(stats));
 	});
 }
 function getRandomPass(){
@@ -440,8 +574,7 @@ function askCredential() {
     password: prompt('Admin password :', creds.password),
   };
 }
-
-$(function () {
+function init(){
   console.log('Ready!');
   $("#menu>a").on("click",function(){
     $("#menu>a").addClass("button-outline");
@@ -525,5 +658,166 @@ $(function () {
               testAccess(db, success, fail);
             }
           });
+}
 
+var gaugeAffectionOptions= {
+	chart: {
+            type: 'solidgauge',
+            marginTop: 50
+        },
+        title: {
+            text: 'Affections',
+            style: {
+                fontSize: '20px'
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            borderWidth: 0,
+            backgroundColor: 'none',
+            shadow: false,
+            style: {
+                fontSize: '16px'
+            },
+            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}</span>',
+            positioner: function (labelWidth, labelHeight) {
+                return {
+                    x: 100 - labelWidth / 2,
+                    y: 100
+                };
+            }
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360,
+            background: [{ // Track for Move
+                outerRadius: '112%',
+                innerRadius: '88%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }, { // Track for Exercise
+                outerRadius: '87%',
+                innerRadius: '63%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }, { // Track for Stand
+                outerRadius: '62%',
+                innerRadius: '38%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
+                borderWidth: 0
+            }]
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            lineWidth: 0,
+            tickPositions: []
+        },
+        plotOptions: {
+            solidgauge: {
+                borderWidth: '34px',
+                dataLabels: {
+                    enabled: false
+                },
+                linecap: 'round',
+                stickyTracking: false
+            }
+        },
+};
+var gaugeOptions= {
+
+        chart: {
+            type: 'gauge',
+            plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false
+        },
+
+        title: {
+            text: 'Team'
+        },
+        credits: {
+            enabled: false
+        },
+        pane: {
+            startAngle: -150,
+            endAngle: 150,
+            background: [{
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#FFF'],
+                        [1, '#333']
+                    ]
+                },
+                borderWidth: 0,
+                outerRadius: '109%'
+            }, {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#333'],
+                        [1, '#FFF']
+                    ]
+                },
+                borderWidth: 1,
+                outerRadius: '107%'
+            }, {
+                // default background
+            }, {
+                backgroundColor: '#DDD',
+                borderWidth: 0,
+                outerRadius: '105%',
+                innerRadius: '103%'
+            }]
+        },
+        yAxis: {
+            min: 0,
+            max: 200,
+            minorTickInterval: 'auto',
+            minorTickWidth: 1,
+            minorTickLength: 10,
+            minorTickPosition: 'inside',
+            minorTickColor: '#666',
+
+            tickPixelInterval: 30,
+            tickWidth: 2,
+            tickPosition: 'inside',
+            tickLength: 10,
+            tickColor: '#666',
+            labels: {
+                step: 2,
+                rotation: 'auto'
+            },
+            title: {
+                text: 'open'
+            },
+            plotBands: [{
+                from: 0,
+                to: 120,
+                color: '#55BF3B' // green
+             }, {
+                from: 120,
+                to: 160,
+                color: '#DDDF0D' // yellow
+            }, {
+                from: 160,
+                to: 200,
+                color: '#DF5353' // red
+            }]
+	},
+        series: [{
+            name: 'Open',
+            data: [0],
+            tooltip: {
+                valueSuffix: ' fiche(s)'
+            }
+        }]
+};
+
+$(function () {
+	init(); //TODO direcly set init inplace of anonymous func
 });
