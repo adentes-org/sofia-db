@@ -44,6 +44,7 @@ addFile index.html "text/html" "$TMP_FILE"
 addFile stats.html "text/html" "$TMP_FILE"
 addFile style.css  "text/css" "$TMP_FILE"
 addFile script.js  "application/javascript" "$TMP_FILE"
+addFile config.js  "application/javascript" "$TMP_FILE"
 
 find lib -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
 find lib -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;

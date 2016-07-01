@@ -1,17 +1,11 @@
 /* global QRCode PouchDB */
 var db = {};
 function formatStats(stats){
-	var ownerToShow = {
-		"username" : {max:20},
-		"echo1": {max:10},
-		"golf": {max:5},
-		"Team1": {max:2}
-	}
 	var html = '<div id="owners">'
-	$.each(ownerToShow, function (id, params) {
+	$.each(config.ownerToShow, function (id, params) {
 		var  open = 0; //Set to zero by default
 		if(typeof stats.owner[id] !== "undefined"){
-			open = stats.owner[id].open; 
+			open = stats.owner[id].open;
 		}
     		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
     		var specificOption = {
@@ -37,17 +31,17 @@ function formatStats(stats){
 			},
 		        series: [{
 		            data: [open]
-		        }]	
+		        }]
     		}
     		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
 	});
 	html += '</div>'
 	html += '<div id="affections">'
-	$.each(ownerToShow, function (id, params) {
+	$.each(config.ownerToShow, function (id, params) {
   		//stats.owner[d.owner_id].affection[d.primaryAffection].total++;
 		var  affections = {}; //Set to empty by default
 		if(typeof stats.owner[id] !== "undefined"){
-			affections = stats.owner[id].affection; 
+			affections = stats.owner[id].affection;
 		}
     		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
     		var specificOption = {
@@ -96,11 +90,11 @@ function getStats(){
 				close:0,
 				deleted:0,
 				affection : {
-					
+
 				}
 			},
 			owner : {
-				
+
 			}
 		};
 		$.each(result.rows, function (index, obj) {
