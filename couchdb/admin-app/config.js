@@ -1,4 +1,7 @@
 var config = {
+	global : {
+		max_open : 50
+	},
 	ownerToShow : {
 		"username" : {max:20},
 		"echo1": {max:10},
@@ -7,8 +10,8 @@ var config = {
 	},
 	affectionColor : {
 		    "undefined" : "#B09F91",
-        "unconscious" : "#f45b5b",
-        "cardio-respiratory-stop" : "#f15c80",
+        "unconscious" : "#f15c80",
+        "cardio-respiratory-stop" : "#f45b5b",
         "little-care" : "#90ed7d",
         "bleeding" : "#f7a35c",
         "difficulty-breathing" : "#8085e9",

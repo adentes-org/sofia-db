@@ -2,7 +2,89 @@
 var db = {};
 var statsTimeout;
 function formatStats(stats){
-	var html = '<div id="owners">'
+	var html = '<div id="global"><p>Nb fiche ouverte : '+stats.fiche.open+'</p><p>Nb fiche fermée : '+stats.fiche.close+'</p><br/><div id="container-open" style="width: 400px; height: 400px; display: inline-block"></div><div id="container-affection" style="width: 400px; height: 400px; display: inline-block"></div></div>'
+
+	var specificOption = {
+			title: {
+					text: "Total open"
+			},
+			yAxis: {
+					min: 0,
+			    max: config.global.max_open,
+					plotBands: [{
+							from: 0,
+							to: config.global.max_open*0.6,
+							color: '#55BF3B' // green
+					}, {
+							from: config.global.max_open*0.6,
+							to: config.global.max_open*0.8,
+							color: '#DDDF0D' // yellow
+					}, {
+							from: config.global.max_open*0.80,
+							to: config.global.max_open,
+							color: '#DF5353' // red
+					}]
+			},
+			series: [{
+					name: 'Open',
+					data: [stats.fiche.open],
+					tooltip: {
+							valueSuffix: ' fiche(s)'
+					}
+			}]
+	}
+	window.setTimeout("Highcharts.chart('container-open',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
+	var specificOption = {
+					title: {
+							text: "Global primary affection"
+					},
+					yAxis: {
+						min: 0,
+						max: stats.fiche.total - stats.fiche.deleted
+					},
+					plotOptions: {
+							solidgauge: {
+									borderWidth: (52/(Object.keys(stats.fiche.affection).length*1.4))*2+'px',
+							}
+					},
+					pane: {
+							background: []
+					},
+					series: []
+	};
+	$.each(stats.fiche.affection, function (name, obj) {
+		if(name.trim() === "" || name === null){ //empty name
+			name = "undefined";
+		}
+		//html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
+		//html += '<p>'+name+' : '+obj.total+'</p>';
+		var size = 100;
+		var larg = 50;
+		if(Object.keys(stats.fiche.affection).length>1){
+			larg = (50/(Object.keys(stats.fiche.affection).length-1));
+			size = (100-specificOption.series.length*larg);
+		}
+		//console.log(size,affections,Object.keys(affections).length,specificOption.series.length);
+		specificOption.series.push({
+						name: name,
+						borderColor: config.affectionColor[name],
+						data: [{
+										color: config.affectionColor[name],
+										radius: size+"%",
+										innerRadius: size+"%",
+										y: (obj.total  - obj.deleted)
+						}]
+		});
+		specificOption.pane.background.push({ // Track for Move
+				outerRadius: (size+larg/2)+"%",
+				innerRadius: (size-larg/2)+"%",
+				backgroundColor: Highcharts.Color(config.affectionColor[name]).setOpacity(0.3).get(),
+				borderWidth: 0
+		});
+	})
+	window.setTimeout("Highcharts.chart('container-affection',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
+
+	html += '<div id="owners">'
 	$.each(config.ownerToShow, function (id, params) {
 		var  open = 0; //Set to zero by default
 		if(typeof stats.owner[id] !== "undefined"){
@@ -15,7 +97,7 @@ function formatStats(stats){
 		        },
 		        yAxis: {
 		            min: 0,
-			    max: params.max,
+			      max: params.max,
 		            plotBands: [{
 		                from: 0,
 		                to: params.max*0.6,
@@ -29,9 +111,13 @@ function formatStats(stats){
 		                to: params.max,
 		                color: '#DF5353' // red
 		            }]
-			},
+			      },
 		        series: [{
-		            data: [open]
+		            name: 'Open',
+		            data: [open],
+		            tooltip: {
+		                valueSuffix: ' fiche(s)'
+		            }
 		        }]
     		}
     		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
@@ -811,13 +897,7 @@ var gaugeOptions= {
                 color: '#DF5353' // red
             }]
 	},
-        series: [{
-            name: 'Open',
-            data: [0],
-            tooltip: {
-                valueSuffix: ' fiche(s)'
-            }
-        }]
+        series: []
 };
 
 $(function () {
