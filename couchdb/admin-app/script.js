@@ -1,5 +1,6 @@
 /* global QRCode PouchDB */
 var db = {};
+var statsTimeout;
 function formatStats(stats){
 	var html = '<div id="owners">'
 	$.each(config.ownerToShow, function (id, params) {
@@ -168,6 +169,9 @@ function getStats(){
 		});
 		console.log(stats);
 		$("#stat_vue").html(formatStats(stats));
+		$(".page#stat>h2").html("Stats (last update : "+(new Date()).toLocaleString()+")");
+
+		clearTimeout(statsTimeout) // In case of doubel timeout;
 		if(!$("a.button#stat").is(".button-outline")){ //We are stille on stats page
 			window.setTimeout(getStats,30*1000); //Update every 30 seconds
 		}
