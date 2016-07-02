@@ -169,7 +169,7 @@ function getStats(){
 		});
 		console.log(stats);
 		$("#stat_vue").html(formatStats(stats));
-		$(".page#stat>h2").html("Stats (last update : "+(new Date()).toLocaleString()+")");
+		$(".page#stat>h2").html("Stats <i style='font-size: 40%;'>(last update : "+(new Date()).toLocaleString()+")</i>");
 
 		clearTimeout(statsTimeout) // In case of doubel timeout;
 		if(!$("a.button#stat").is(".button-outline")){ //We are stille on stats page
