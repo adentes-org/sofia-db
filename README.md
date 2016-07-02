@@ -20,6 +20,12 @@ docker-compose up -d
 docker-compose up -d couchdb
 ``` 
  
+## Update admin app on running DB 
+(to be executed in the updated couchdb folder)
+```
+export HOST=https://username:userpass@my.db.host
+./scripts/install-admin-app.sh $HOST sofia-admin
+``` 
 NB: docker-compose install  https://www.google.fr/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwiSwazumdLLAhXD0hoKHU8NCJAQFggsMAE&url=https%3A%2F%2Fdocs.docker.com%2Fcompose%2Finstall%2F&usg=AFQjCNHYRp2Dlli1ZbdYel8gXaVdYwgwUw
 
 If you need any dns name : http://nip.io/
