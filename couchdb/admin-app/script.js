@@ -168,6 +168,9 @@ function getStats(){
 		});
 		console.log(stats);
 		$("#stat_vue").html(formatStats(stats));
+		if(!$("a.button#stat").is(".button-outline")){ //We are stille on stats page
+			window.setTimeout(getStats,30*1000); //Update every 30 seconds
+		}
 	});
 }
 function getRandomPass(){
