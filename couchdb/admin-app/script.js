@@ -7,7 +7,7 @@ function formatStats(stats){
 		if(typeof stats.owner[id] !== "undefined"){
 			open = stats.owner[id].open;
 		}
-    		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; float: left"></div>';
+    		html += '<div id="container-owner-'+id+'" style="width: 200px; height: 200px; display: inline-block"></div>';
     		var specificOption = {
 		        title: {
 		            text: id
@@ -35,7 +35,7 @@ function formatStats(stats){
     		}
     		window.setTimeout("Highcharts.chart('container-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeOptions,specificOption))+",function callback() {});",150)
 	});
-	html += '</div>'
+	html += '</div><br/>'
 	html += '<div id="affections">'
 	$.each(config.ownerToShow, function (id, params) {
   		//stats.owner[d.owner_id].affection[d.primaryAffection].total++;
@@ -43,12 +43,20 @@ function formatStats(stats){
 		if(typeof stats.owner[id] !== "undefined"){
 			affections = stats.owner[id].affection;
 		}
-    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; float: left">';
+    		html += '<div id="container-affections-owner-'+id+'" style="width: 200px; height: 200px; display: inline-block">';
     		var specificOption = {
     		        yAxis: {
             			min: 0,
             			max: stats.fiche.total - stats.fiche.deleted
     		        },
+				        plotOptions: {
+				            solidgauge: {
+				                borderWidth: (52/(Object.keys(affections).length*1.4))+'px',
+										}
+							  },
+				        pane: {
+				            background: []
+				        },
     		        series: []
     		};
 		$.each(affections, function (name, obj) {
@@ -57,21 +65,29 @@ function formatStats(stats){
 			}
 			//html += '<p>'+name+' : '+JSON.stringify(obj)+'</p>';
 			//html += '<p>'+name+' : '+obj.total+'</p>';
-			var size = "100%"
-			if(affections.length>1){
-				size = (100-specificOption.series.length*(50/(affections.length-1)))+"%"
+			var size = 100;
+			var larg = 50;
+			if(Object.keys(affections).length>1){
+			  larg = (50/(Object.keys(affections).length-1));
+				size = (100-specificOption.series.length*larg);
 			}
-			console.log(size);
+			console.log(size,affections,Object.keys(affections).length,specificOption.series.length);
 			specificOption.series.push({
-				name: name,
+							name: name,
 			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
 			        data: [{
 			                color: Highcharts.getOptions().colors[specificOption.series.length],
-			                radius: size,
-			                innerRadius: size,
+			                radius: size+"%",
+			                innerRadius: size+"%",
 			                y: (obj.total  - obj.deleted)
 			        }]
-			})
+			});
+			specificOption.pane.background.push({ // Track for Move
+					outerRadius: (size+larg/2)+"%",
+					innerRadius: (size-larg/2)+"%",
+					backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[specificOption.pane.background.length]).setOpacity(0.3).get(),
+					borderWidth: 0
+			});
 		})
 		html += '</div>'
     		window.setTimeout("Highcharts.chart('container-affections-owner-"+id+"',"+JSON.stringify(Highcharts.merge(gaugeAffectionOptions,specificOption))+",function callback() {});",150)
@@ -686,23 +702,7 @@ var gaugeAffectionOptions= {
         },
         pane: {
             startAngle: 0,
-            endAngle: 360,
-            background: [{ // Track for Move
-                outerRadius: '112%',
-                innerRadius: '88%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
-                borderWidth: 0
-            }, { // Track for Exercise
-                outerRadius: '87%',
-                innerRadius: '63%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
-                borderWidth: 0
-            }, { // Track for Stand
-                outerRadius: '62%',
-                innerRadius: '38%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
-                borderWidth: 0
-            }]
+            endAngle: 360
         },
         yAxis: {
             min: 0,
