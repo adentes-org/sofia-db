@@ -72,12 +72,12 @@ function formatStats(stats){
 			  larg = (50/(Object.keys(affections).length-1));
 				size = (100-specificOption.series.length*larg);
 			}
-			console.log(size,affections,Object.keys(affections).length,specificOption.series.length);
+			//console.log(size,affections,Object.keys(affections).length,specificOption.series.length);
 			specificOption.series.push({
 							name: name,
-			        borderColor: Highcharts.getOptions().colors[specificOption.series.length],
+			        borderColor: config.affectionColor[name],
 			        data: [{
-			                color: Highcharts.getOptions().colors[specificOption.series.length],
+			                color: config.affectionColor[name],
 			                radius: size+"%",
 			                innerRadius: size+"%",
 			                y: (obj.total  - obj.deleted)
@@ -86,7 +86,7 @@ function formatStats(stats){
 			specificOption.pane.background.push({ // Track for Move
 					outerRadius: (size+larg/2)+"%",
 					innerRadius: (size-larg/2)+"%",
-					backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[specificOption.pane.background.length]).setOpacity(0.3).get(),
+					backgroundColor: Highcharts.Color(config.affectionColor[name]).setOpacity(0.3).get(),
 					borderWidth: 0
 			});
 		})
