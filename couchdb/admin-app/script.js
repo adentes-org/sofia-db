@@ -266,6 +266,10 @@ function getStats(){
 function getRandomPass(){
   return Math.random().toString(36).substr(2, 5)
 }
+function getDiffConflict(o,n) {
+    //return objectDiff.diff(o.patient, n.patient)
+    return objectDiff.diff($.extend({}, o, {events : []}), $.extend({}, n, {events : []})) //Create a shallow clone and overwrite events parts to not be big in term of data 
+}
 function validateMerge() {
   $('#conflict>button').attr('disabled', 'disabled').text('Sending ...').blur();
   var obj = JSON.parse($(".page#conflict>#editor>#result>.raw").html()); //TODO check obj ?
@@ -277,8 +281,9 @@ function validateMerge() {
             diff : objectDiff.diff(JSON.parse($(".page#conflict>#editor>#src").html()),obj),
             conflict : JSON.parse($(".page#conflict>#editor>#conflict").html()),
             */
+            diff: getDiffConflict(JSON.parse($(".page#conflict>#editor>#src").html()),obj),
             timestamp : Date.now(),
-            user :  "admin" //TODO
+            user :  db.users.__opts.auth.username
   });
   db.fiches.put(obj).then(function () {
     $(".page#conflict>#editor>#src").html("");
