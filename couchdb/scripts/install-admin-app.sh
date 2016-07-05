@@ -55,8 +55,7 @@ find lib -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascri
 sed -i '$ s/.$//' "$TMP_FILE"
 echo "  }
 }" >> "$TMP_FILE"
-cd ..
-#cat /tmp/upload-data
+cd .. && rm -Rf admin-app
 
 curl -X PUT $HOST/$ADMIN_DB/_design/sofia-admin -H 'Content-Type: application/json' -d "@$TMP_FILE"
 
@@ -66,3 +65,4 @@ echo "Compacting database $ADMIN_DB"
 curl -X POST  -H 'Content-Type: application/json' $HOST/$ADMIN_DB/_compact
 
 echo "Admin app avalaible at : /$ADMIN_DB/_design/sofia-admin/index.html"
+
