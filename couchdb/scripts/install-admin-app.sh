@@ -35,27 +35,28 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 #echo "Deleting any old file in DB"
 #curl -X DELETE $HOST/$ADMIN_DB/_design/sofia-admin?rev=$(curl -X GET $HOST/$ADMIN_DB/_design/sofia-admin | cut -d"\"" -f8)
 echo "Getting admin-app..."
-git clone https://github.com/adentes-org/sofia-admin-app.git "admin-app" && cd admin-app
+#git clone https://github.com/adentes-org/sofia-admin-app.git "admin-app" && cd admin-app
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
 #$(openssl base64 < "admin-app/$file" | tr '\n' ' ')
 
 cd admin-app
-addFile index.html "text/html" "$TMP_FILE"
-#addFile stats.html "text/html" "$TMP_FILE"
-#addFile style.css  "text/css" "$TMP_FILE"
-#addFile script.js  "application/javascript" "$TMP_FILE"
-#addFile config.js  "application/javascript" "$TMP_FILE"
+#cd ../../sofia-admin-app
 
-find lib -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
-find lib -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;
-find lib -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
+addFile index.html "text/html" "$TMP_FILE"
+
+find assets -type f -name '*.css' -exec  bash -c 'addFile "$0" "text/css" "$TMP_FILE"' {} \;
+find assets -type f -name '*.png' -exec  bash -c 'addFile "$0" "image/png" "$TMP_FILE"' {} \;
+find assets -type f -name '*.js' -exec  bash -c 'addFile "$0" "application/javascript" "$TMP_FILE"' {} \;
+find assets -type f -name '*.svg' -exec  bash -c 'addFile "$0" "image/svg+xml" "$TMP_FILE"' {} \;
 
 sed -i '$ s/.$//' "$TMP_FILE"
 echo "  }
 }" >> "$TMP_FILE"
+
 cd .. && rm -Rf admin-app
+#cd ../sofia-db
 
 curl -X PUT $HOST/$ADMIN_DB/_design/sofia-admin -H 'Content-Type: application/json' -d "@$TMP_FILE"
 
