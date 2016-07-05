@@ -34,6 +34,8 @@ curl -X PUT -d '{ "language": "javascript", "validate_doc_update": "function(new
 
 #echo "Deleting any old file in DB"
 #curl -X DELETE $HOST/$ADMIN_DB/_design/sofia-admin?rev=$(curl -X GET $HOST/$ADMIN_DB/_design/sofia-admin | cut -d"\"" -f8)
+echo "Getting admin-app..."
+git clone https://github.com/adentes-org/sofia-admin-app.git "admin-app" && cd admin-app
 
 echo "Uploading files ..."
 echo "{\"_attachments\": { " > $TMP_FILE
