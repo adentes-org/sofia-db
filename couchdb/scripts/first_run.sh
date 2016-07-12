@@ -36,18 +36,18 @@ curl -X PUT $HOST/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE, OPTION
 curl -X PUT $HOST/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
 
 # Create Database
-if [ ! -z "$DB" ]; then
-    echo "Creating database: \"$DB\"..."
-    curl -X PUT $HOST/$DB
-    echo "Applying secu on database: \"$DB\"..."
-    curl -X PUT -d '{"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":["equipier"]}}' $HOST/$DB/_security
-
-    echo "Uploading default config in database: \"$DB\"..."
-    curl -X PUT -H "Content-Type:text/html" --data-binary "<h2>Hello World</h2>" "$HOST/$DB/_design/sofia-config/memo.html"
-
-    echo "Compacting database $DB"
-    curl -X POST  -H 'Content-Type: application/json' $HOST/$DB/_compact
-fi
+#if [ ! -z "$DB" ]; then
+#    echo "Creating database: \"$DB\"..."
+#    curl -X PUT $HOST/$DB
+#    echo "Applying secu on database: \"$DB\"..."
+#    curl -X PUT -d '{"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":["equipier"]}}' $HOST/$DB/_security
+#
+#    echo "Uploading default config in database: \"$DB\"..."
+#    curl -X PUT -H "Content-Type:text/html" --data-binary "<h2>Hello World</h2>" "$HOST/$DB/_design/sofia-config/memo.html"
+#
+#    echo "Compacting database $DB"
+#    curl -X POST  -H 'Content-Type: application/json' $HOST/$DB/_compact
+#fi #Not necessary anymore
 
 # Create Admin App Database
 (cd / && /bin/bash scripts/install-admin-app.sh $HOST "sofia-admin" )
