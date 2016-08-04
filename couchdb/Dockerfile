@@ -10,7 +10,9 @@ RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat p
 
 RUN sed -e 's/^database_dir = .*$/database_dir = \/data/' -i /usr/local/etc/couchdb/default.ini && \
     sed -e 's/^view_index_dir = .*$/view_index_dir = \/data/' -i /usr/local/etc/couchdb/default.ini && \
+    echo '_default = [{db_fragmentation, "70%"}, {view_fragmentation, "60%"}]' >> /usr/local/etc/couchdb/default.ini && \
     chmod +x /scripts/*.sh && touch /.firstrun
+#[compactions] is at the end of file so simply append
 
 # Command to run
 ENTRYPOINT ["/scripts/run.sh"]
