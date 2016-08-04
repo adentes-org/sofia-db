@@ -1,6 +1,10 @@
 #!/bin/bash
 USER=${COUCHDB_USERNAME:-couchdb}
 PASS=${COUCHDB_PASSWORD:-$(pwgen -s -1 16)}
+
+WITH_WEBAPP=${WITH_WEBAPP:-0}
+WITH_ADMINAPP=${WITH_ADMINAPP:-0}
+
 GENERATE_TEST_DATA=${SOFIA_TEST:-0}
 
 PORT=5984
@@ -34,10 +38,15 @@ curl -X PUT $HOST/_config/cors/credentials -d '"true"'
 curl -X PUT $HOST/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE, OPTIONS"'
 curl -X PUT $HOST/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
 
-# Create Admin App Database
-(cd / && /bin/bash scripts/install-admin-app.sh $HOST "sofia-admin" )
-# Create Web App Database
-(cd / && /bin/bash scripts/install-web-app.sh $HOST "sofia-app" )
+if [ ! -z "$WITH_ADMINAPP" ]; then
+    # Create Admin App Database
+    (cd / && /bin/bash scripts/install-admin-app.sh $HOST "sofia-admin" )
+fi
+
+if [ ! -z "$WITH_WEBAPP" ]; then
+    # Create Web App Database
+    (cd / && /bin/bash scripts/install-web-app.sh $HOST "sofia-app" )
+fi
 
 # Create sample user (equipier)
 if [ ! -z "$GENERATE_TEST_DATA" ]; then
