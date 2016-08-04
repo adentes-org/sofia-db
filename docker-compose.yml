@@ -6,6 +6,8 @@ services:
     environment:
       - COUCHDB_USERNAME=username
       - COUCHDB_PASSWORD=userpass
+      - WITH_WEBAPP=true
+      - WITH_ADMINAPP=true
 #      - SOFIA_TEST=100 #Generate 100 testing users
     volumes:
       - ./couchdb/data:/data
