@@ -2,7 +2,6 @@ FROM klaemo/couchdb
 MAINTAINER Antoine GIRARD <antoine.girard@sapk.fr>
 
 ADD scripts /scripts
-ADD admin-app /admin-app
 
 RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat pwgen git npm \
  && npm install -g gulp bower-installer && ln -s /usr/bin/nodejs /usr/bin/node \
