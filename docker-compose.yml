@@ -18,6 +18,7 @@ services:
   front: # Comment all this parts to disable caddy front-end
     build: ./caddy
     image: adentes/sofia-frontdb
+#    command: "--port 443 --conf /etc/Caddyfile" #To publish on 443 port and not on 5984 couchdb default port
     environment:
       - HOSTNAME=localhost # In production my.domain.fr
     ports:
