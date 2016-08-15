@@ -2,7 +2,7 @@ FROM alpine:3.3
 MAINTAINER Antoine GIRARD <antoine.girard@sapk.fr>
 # Inspired from https://github.com/abiosoft/caddy-docker/blob/master/Dockerfile
 
-LABEL caddy_version="0.8.2" architecture="amd64"
+LABEL caddy_version="0.9.0" architecture="amd64"
 RUN apk add --update openssh-client git tar
 
 RUN curl --silent --show-error --fail --location \
