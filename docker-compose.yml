@@ -8,7 +8,6 @@ services:
       - COUCHDB_PASSWORD=userpass
       - WITH_WEBAPP=true
       - WITH_ADMINAPP=true
-#      - SOFIA_TEST=100 #Generate 100 testing users
     volumes:
       - ./couchdb/data:/data
 #    ports:     # Publish if you want to don't use a front-end or publish on loopback
