@@ -48,22 +48,23 @@ if [ "$WITH_WEBAPP" = true ]; then
     (cd / && /bin/bash scripts/install-web-app.sh $HOST "sofia-app" )
 fi
 
+#Don't used anymore since role are based on dbname now.
 # Create sample user (equipier)
-if [ ! -z "$GENERATE_TEST_DATA" ]; then
-    for i in $(eval echo "{1..$GENERATE_TEST_DATA}")
-    do
-        U="Team$i"
-        P=$(pwgen -s -1 6)
-        echo "Creating team (équipier): \"$U\", with password : \"$P\"..."
-        curl --silent -X PUT -H 'Content-Type: application/json' $HOST/_users/org.couchdb.user:$U -d "\
-            {\"_id\": \"org.couchdb.user:$U\", \
-            \"name\": \"$U\", \
-            \"type\": \"user\", \
-            \"roles\": [\"equipier\"], \
-            \"password\": \"$P\" \
-        }" 2>/dev/null > /dev/null
-    done
-fi
+#if [ ! -z "$GENERATE_TEST_DATA" ]; then
+#    for i in $(eval echo "{1..$GENERATE_TEST_DATA}")
+#    do
+#        U="Team$i"
+#        P=$(pwgen -s -1 6)
+#        echo "Creating team (équipier): \"$U\", with password : \"$P\"..."
+#        curl --silent -X PUT -H 'Content-Type: application/json' $HOST/_users/org.couchdb.user:$U -d "\
+#            {\"_id\": \"org.couchdb.user:$U\", \
+#            \"name\": \"$U\", \
+#            \"type\": \"user\", \
+#            \"roles\": [\"equipier\"], \
+#            \"password\": \"$P\" \
+#        }" 2>/dev/null > /dev/null
+#    done
+#fi
 
 echo "Compacting database _users ..."
 curl -X POST  -H 'Content-Type: application/json' $HOST/_users/_compact
