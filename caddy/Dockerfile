@@ -1,9 +1,9 @@
-FROM alpine:3.3
+FROM alpine:3.4
 MAINTAINER Antoine GIRARD <antoine.girard@sapk.fr>
 # Inspired from https://github.com/abiosoft/caddy-docker/blob/master/Dockerfile
 
 LABEL caddy_version="0.9.0" architecture="amd64"
-RUN apk add --update openssh-client git tar
+RUN apk add --no-cache --update curl tar
 
 RUN curl --silent --show-error --fail --location \
       --header "Accept: application/tar+gzip, application/x-gzip, application/octet-stream" -o - \
