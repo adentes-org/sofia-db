@@ -1,10 +1,12 @@
-FROM klaemo/couchdb
+FROM klaemo/couchdb:1.6
 MAINTAINER Antoine GIRARD <antoine.girard@sapk.fr>
 
 ADD scripts /scripts
 
-RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat pwgen git npm \
- && npm install -g gulp bower-installer && ln -s /usr/bin/nodejs /usr/bin/node \
+#RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat pwgen git nodejs \
+# && npm install -g gulp bower-installer && ln -s /usr/bin/nodejs /usr/bin/node \
+# && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y -qq && apt-get install -y --no-install-recommends netcat pwgen git \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN sed -e 's/^database_dir = .*$/database_dir = \/data/' -i /usr/local/etc/couchdb/default.ini && \
